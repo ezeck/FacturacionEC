@@ -1,0 +1,347 @@
+CODIGO COMENTADO EN EL MAIN DESDE LA LINEA 81
+
+
+
+		// // <editor-fold desc="Resources">
+		// if(args.length > 0){
+		// String arg = args[0];
+		// // CON DESCUENTO - DESCUENTO 0
+		// if(arg.compareTo("desc") == 0){
+		// // Si quieres que facture las que estan aptas para facturar
+		// boolean FACTURAR = true;
+		//
+		// System.out.println("<"+Utils.getNow()+"> [DESCUENTO] MODE ON.");
+		// ArrayList<PendingData> pendingDatas = readPending();
+		//
+		// XSSFWorkbook workbook = new XSSFWorkbook();
+		// XSSFSheet spreadsheet =
+		// workbook.createSheet("FacturadoConDescuento");
+		// XSSFRow row;
+		//
+		// Map< String, Object[] > _data =
+		// new TreeMap< String, Object[] >();
+		// _data.put( "1", new Object[] {
+		// "NUM. RESERVA", "TIPO DE PRODUCTO", "NUM. FACTURA", "STATUS",
+		// "RESULTADO ROBOT" });
+		//
+		// int count = 1;
+		// for(PendingData pendingData : pendingDatas){
+		// pendingData.setFactura(FACTURAR);
+		// pendingData.setConDescuento(true);
+		//
+		// switch (pendingData.getProduct()){
+		// case "VUELO":
+		// pendingData.setProduct("FLIGHT");
+		// processFlights("", "", null, null, null, pendingData, false, false);
+		// break;
+		//// case "paquetes":
+		//// processPackages("", "", pendingData.getNumRes(), null, null, true);
+		//// break;
+		//// case "Hoteles":
+		//// pendingData.setProduct("HOTEL");
+		//// processHotels("", "", null, null, null, pendingData);
+		//// break;
+		// default:
+		// System.out.println("<"+Utils.getNow()+">
+		// ["+pendingData.getNumRes()+"] InvoiceData invalid.");
+		// break;
+		// }
+		// String prod = "";
+		// switch (pendingData.getProduct()){
+		// case "FLIGHT":
+		// prod = "Vuelos";
+		// break;
+		// case "HOTEL":
+		// prod = "Hoteles";
+		// break;
+		// }
+		//
+		// _data.put(String.valueOf(++count), new Object[] {
+		// pendingData.getNumRes(), prod, pendingData.getNumFac(),
+		// pendingData.getStatus(), pendingData.getReason()});
+		// }
+		//
+		// Set< String > keyid = _data.keySet();
+		// int rowid = 0;
+		// for (String key : keyid)
+		// {
+		// row = spreadsheet.createRow(rowid++);
+		// Object [] objectArr = _data.get(key);
+		// int cellid = 0;
+		// for (Object obj : objectArr)
+		// {
+		// Cell cell = row.createCell(cellid++);
+		// cell.setCellValue((String)obj);
+		// }
+		// }
+		// //Write the workbook in file system
+		// FileOutputStream out = new FileOutputStream(
+		// new File("ResultadoDescuentos.xlsx"));
+		//
+		// workbook.write(out);
+		// out.close();
+		// System.out.println("ResultadoDescuentos.xlsx escrito correctamente."
+		// );
+		//
+		// System.out.println("<"+Utils.getNow()+"> [DESCUENTO] MODE OFF.");
+		// }
+		//
+		// // PENDIENTES EXCEL
+		// if(arg.compareTo("cpen") == 0){
+		// // Si quieres que facture las que estan aptas para facturar
+		// boolean FACTURAR = false;
+		//
+		// System.out.println("<"+Utils.getNow()+"> [PENDIENTES] MODE ON.");
+		// ArrayList<PendingData> pendingDatas = readPending();
+		//
+		// XSSFWorkbook workbook = new XSSFWorkbook();
+		// XSSFSheet spreadsheet = workbook.createSheet("Pendientes");
+		// XSSFRow row;
+		//
+		// Map< String, Object[] > _data =
+		// new TreeMap< String, Object[] >();
+		// _data.put( "1", new Object[] {
+		// "NUM. RESERVA", "TIPO DE PRODUCTO", "NUM. FACTURA", "STATUS",
+		// "RESULTADO ROBOT" });
+		//
+		// int count = 1;
+		// for(PendingData pendingData : pendingDatas){
+		// pendingData.setFactura(FACTURAR);
+		//
+		// switch (pendingData.getProduct()){
+		// case "Vuelos":
+		// pendingData.setProduct("FLIGHT");
+		// processFlights("", "", null, null, null, pendingData, false, false);
+		// break;
+		// case "Hoteles":
+		// pendingData.setProduct("HOTEL");
+		// processHotels("", "", null, null, null, pendingData, false);
+		// break;
+		// default:
+		// System.out.println("<"+Utils.getNow()+">
+		// ["+pendingData.getNumRes()+"] InvoiceData invalid.");
+		// break;
+		// }
+		// String prod = "";
+		// switch (pendingData.getProduct()){
+		// case "FLIGHT":
+		// prod = "Vuelos";
+		// break;
+		// case "HOTEL":
+		// prod = "Hoteles";
+		// break;
+		// }
+		//
+		// _data.put(String.valueOf(++count), new Object[] {
+		// pendingData.getNumRes(), prod, pendingData.getNumFac(),
+		// pendingData.getStatus(), pendingData.getReason()});
+		// }
+		//
+		// Set< String > keyid = _data.keySet();
+		// int rowid = 0;
+		// for (String key : keyid)
+		// {
+		// row = spreadsheet.createRow(rowid++);
+		// Object [] objectArr = _data.get(key);
+		// int cellid = 0;
+		// for (Object obj : objectArr)
+		// {
+		// Cell cell = row.createCell(cellid++);
+		// cell.setCellValue((String)obj);
+		// }
+		// }
+		// //Write the workbook in file system
+		// FileOutputStream out = new FileOutputStream(
+		// new File("ResultadoPendientes.xlsx"));
+		//
+		// workbook.write(out);
+		// out.close();
+		// System.out.println("ResultadoPendientes.xlsx escrito correctamente."
+		// );
+		//
+		// System.out.println("<"+Utils.getNow()+"> [PENDIENTES] MODE OFF.");
+		// }
+		// // AGENCIAS AFILIADAS EXCEL
+		// if(arg.compareTo("ag") == 0){
+		// System.out.println("<"+Utils.getNow()+"> [AFFAGENCY] MODE ON.");
+		// ArrayList<AgencyData> agencyDatas = readAgencies();
+		// //ArrayList<AgencyData> agencyDatas = new ArrayList<>();
+		//
+		// //Create Blank workbook
+		// XSSFWorkbook workbook = new XSSFWorkbook();
+		// //Create a blank spreadsheet
+		// XSSFSheet spreadsheet = workbook.createSheet("Ag. Afiliadas");
+		// //Create row object
+		// XSSFRow row;
+		// //This data needs to be written (Object[])
+		// Map< String, Object[] > _data =
+		// new TreeMap< String, Object[] >();
+		// _data.put( "1", new Object[] {
+		// "NUM. RESERVA", "TIPO DE PRODUCTO", "NOM. CLIENTE", "NUM. RUC",
+		// "EMAIL", "NUM. FACTURA", "STATUS", "RESULTADO ROBOT" });
+		//
+		// int count = 1;
+		// for(AgencyData agencyData : agencyDatas){
+		// switch (agencyData.getProduct()){
+		// case "Vuelo":
+		// agencyData.setProduct("FLIGHT");
+		// processFlights("", "", null, null, agencyData, null, false, false);
+		// break;
+		// case "Hotel":
+		// agencyData.setProduct("HOTEL");
+		// processHotels("", "", null, null, agencyData, null, false);
+		// break;
+		// default:
+		// System.out.println("<"+Utils.getNow()+"> ["+agencyData.getNumRes()+"]
+		// InvoiceData invalid.");
+		// break;
+		// }
+		// String prod = "";
+		// switch (agencyData.getProduct()){
+		// case "FLIGHT":
+		// prod = "Vuelo";
+		// break;
+		// case "HOTEL":
+		// prod = "Hotel";
+		// break;
+		// }
+		//
+		// _data.put(String.valueOf(++count), new Object[] {
+		// agencyData.getNumRes(), prod, agencyData.getNomCli(),
+		// agencyData.getNumRUC(), agencyData.getEmail(),
+		// agencyData.getNumFac(), agencyData.getStatus(),
+		// agencyData.getReason()});
+		// }
+		//
+		// //Iterate over data and write to sheet
+		// Set< String > keyid = _data.keySet();
+		// int rowid = 0;
+		// for (String key : keyid)
+		// {
+		// row = spreadsheet.createRow(rowid++);
+		// Object [] objectArr = _data.get(key);
+		// int cellid = 0;
+		// for (Object obj : objectArr)
+		// {
+		// Cell cell = row.createCell(cellid++);
+		// cell.setCellValue((String)obj);
+		// }
+		// }
+		// //Write the workbook in file system
+		// FileOutputStream out = new FileOutputStream(
+		// new File("ResultadoAgencias.xlsx"));
+		//
+		// workbook.write(out);
+		// out.close();
+		// System.out.println("ResultadoAgencias.xlsx escrito correctamente." );
+		//
+		// System.out.println("<"+Utils.getNow()+"> [AFFAGENCY] MODE OFF.");
+		// }
+		// // REPROCESO
+		// if(arg.compareTo("rep") == 0){
+		// String[] invoices = readFile();
+		// System.out.println("<"+Utils.getNow()+"> [REPROCESS] MODE ON.");
+		// for(String numFac : invoices){
+		// numFac = numFac.replace("\r", "").replace("\n", "");
+		// InvoiceData iD = productOf(numFac);
+		//
+		// switch (iD.getProduct()){
+		// case "VUELOS":
+		// processFlights("", "", null, iD, null, null, false, false);
+		// break;
+		// case "HOTELES":
+		// processHotels("", "", null, iD, null, null, false);
+		// break;
+		// default:
+		// System.out.println("<"+Utils.getNow()+"> ["+numFac+"] InvoiceData
+		// invalid.");
+		// }
+		// }
+		// System.out.println("<"+Utils.getNow()+"> [REPROCESS] MODE OFF.");
+		// }
+		// // INGRESO DE SOLO TICKETS
+		// if(arg.compareTo("tkt") == 0){
+		// String[] invoices = readFile();
+		// System.out.println("<"+Utils.getNow()+"> [TICKETGEN] MODE ON.");
+		//
+		// for(String numFac : invoices) {
+		// numFac = numFac.replace("\r", "").replace("\n", "");
+		// InvoiceData iD = productOf(numFac);
+		//
+		// Product product = null;
+		// JSONObject prodObj = new JSONObject();
+		// switch (iD.getProduct()){
+		// case "VUELOS":
+		// prodObj.put("TRANSACTIONID", Long.valueOf(iD.getNumRes().trim()));
+		// product = new Flight(prodObj, false, false);
+		// product.load();
+		// break;
+		// case "HOTELES":
+		// JSONArray transactions = uManager.getTransactions("HOTEL",
+		// iD.getNumRes()); // TRANSACTION ID
+		// if(!Utils.isJSONEmpty(transactions)) {
+		// for (int i = 0; i < transactions.length(); i++) {
+		// prodObj = transactions.getJSONObject(i);
+		// product = new Hotel(prodObj, false);
+		// product.load();
+		// }
+		// }
+		// break;
+		// default:
+		// System.out.println("<"+Utils.getNow()+"> ["+numFac+"] InvoiceData
+		// invalid.");
+		// }
+		//
+		// ArrayList<Ticket> tickets = null; // For later AdvEBol
+		// if(product != null){
+		// try {
+		// tickets = ticketManager.generateTickets(product);
+		// product.setTickets(tickets);
+		// } catch (ErrorFieldNotFound errorFieldNotFound) {
+		// errorFieldNotFound.printStackTrace();
+		// } catch (NoTickets noTickets) {
+		// System.out.println(noTickets.getMessage());
+		// }
+		//
+		// if(tickets != null){
+		// try {
+		// ticketManager.insertToDB(product, iD, database);
+		// database.commit();
+		// } catch (SQLException e) {
+		// e.printStackTrace();
+		// }
+		// }
+		// }
+		//
+		// }
+		// System.out.println("<"+Utils.getNow()+"> [TICKETGEN] MODE OFF.");
+		// }
+		//
+		// } else // </editor-fold>2
+		// {
+		// processFlights("2016-06-01", "", null, null, null, null, false,
+		// false);
+		// //processFlights("2016-04-01", "2016-05-01", "1515018501", null,
+		// null, null, false, false);
+		//
+		// // HOTELES COMUNES
+		// //processHotels("2016-06-01", "", null, null, null, null, false);
+		//
+		// // HOTELES PRE COBRO
+		// //processHotels("2016-06-01", "", null, null, null, null, true);
+		//
+		// // PROCESS PENDING NC
+		// // DEBE CORRER PARA CHEQUEAR QUE NC TENEMOS PENDIENTES DE CREAR
+		// //processDiscountNCs();
+		//
+		// // PROCESS DS
+		// //processDSs("20160601", "", null, null, null, null, false);
+		//
+		// // PROCESS CAR
+		// //processCars("2016-06-01", "", null, null, null, null, false);
+		//
+		// // PROCESS PACKAGES
+		// //processPackages("20160601", "", null, null, null, false);
+		//
+		// //processNotaCredito("1515018501");
+		// }
