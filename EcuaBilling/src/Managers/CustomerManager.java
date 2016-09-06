@@ -68,11 +68,11 @@ public class CustomerManager {
 			Product flight = productHashMap.get("FLIGHT");
 
 			JSONObject FlightJSON = null;
-
+			boolean isInfant = false;
 			Ticket adtTicket = null;
 			for (Ticket ticket : flight.getTickets()) {
 				if (ticket.getTipPaxFull().compareTo("INFANT") == 0) {
-					// break;
+					isInfant = true;
 				}
 				if (ticket.getTipPaxFull().compareTo("ADULT") == 0 && !ticket.getTipPaxFull().contains("INFANT")) {
 					adtTicket = ticket;
@@ -86,7 +86,7 @@ public class CustomerManager {
 				}
 			}
 
-			if (adtTicket == null)
+			if (adtTicket == null && isInfant)
 				throw new NoADTPax("<" + Utils.getNow() + "> [CLIENTE] ABORTANDO - VUELO SIN PASAJERO ADULTO");
 
 			URL url = new URL(

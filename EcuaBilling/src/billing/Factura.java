@@ -20,6 +20,8 @@ public class Factura {
 	public static int count_produc = 0;
 	public static String numero_serie = "001003";
 	public static FenixFlightManager flgManager = null;
+	public static String codcaja = "";
+	public static String codcajaFee = "";
 
 	public Factura(ArrayList<Product> _products, Customer _customer, Database _database) {
 		this.database = _database;
@@ -816,7 +818,7 @@ public class Factura {
 					}
 					break;
 				}
-
+				codcaja = CodCaj;
 				stmt = database.getConnection()
 						.prepareStatement("INSERT INTO AdvFPag (DocKey, TipDoc, NumDoc, FecDoc, CodCli, CodVen, "
 								+ "CodCob, CodDep, Refer, Concepto, FecIng, ForPag, ValPag, CodCaj, CodPag, CtaPag, NumPag, FecVen, Comment, Origen, DocOrg, "
@@ -921,6 +923,7 @@ public class Factura {
 				} else {
 					valor_fee = product.getFEE_TOTAL();
 				}
+				codcajaFee = CodCaj;
 				stmt = database.getConnection()
 						.prepareStatement("INSERT INTO AdvFPag (DocKey, TipDoc, NumDoc, FecDoc, CodCli, CodVen, "
 								+ "CodCob, CodDep, Refer, Concepto, FecIng, ForPag, ValPag, CodCaj, CodPag, CtaPag, NumPag, FecVen, Comment, Origen, DocOrg, "
@@ -1128,9 +1131,9 @@ public class Factura {
 								+ "CodCia, CodEje, CodUsr, FecUsr, Status, AuditLog, RecordID) VALUES (?, ?, 'IN', '', ?, ?, ?, ?, '', '', ?, '', ?, 0, 0, "
 								+ "?, ?, ?, ?, ?, ?, ?, '', 'VAV', ?, 'PE', '', '', '01/01/1900 00:00', 0, 0, 0, 0, '01/01/1900 00:00', '', '01', '05', 'Robot', ?, 'A', ?, ?);");
 
-				stmt.setString(1, "VAV|" + CodCaj + "|IN|" + header.getNumFac() + "|" + product.getForPagInvoice() + "|"
+				stmt.setString(1, "VAV|" + codcaja + "|IN|" + header.getNumFac() + "|" + product.getForPagInvoice() + "|"
 						+ header.getNumFac());
-				stmt.setString(2, CodCaj);
+				stmt.setString(2, codcaja);
 				stmt.setString(3, header.getNumFac());
 				stmt.setString(4, header.getFecFac());
 				stmt.setString(5, header.getCodCli());
@@ -1182,82 +1185,82 @@ public class Factura {
 				else
 					feeChannel = "";
 
-				if (product.getFee().getForPagInvoice().toString().contains("EF")) {
-					CodCaj = "26";
-					CodTar = "";
-				} else {
-					if (pChannels.containsKey("FEE"))
-						feeChannel = pChannels.get("FEE");
-					else
-						feeChannel = "";
-
-					if (feeChannel.compareTo("BANK_DEPOSIT") == 0) {
-						CodCaj = "02";
-						CodTar = "";
-						break;
-					} else {
-						switch (feeChannel) {
-						case "VTC":
-							CodCaj = "20";
-							break;
-						case "PSNT":
-							switch (product.getCodTar()) {
-							case "MC":
-								if (!product.getTipArt().equals("CO")) {
-									CodCaj = "18";
-								} else {
-									CodCaj = "13";
-								}
-								break;
-							case "VI":
-								if (!product.getTipArt().equals("CO")) {
-									CodCaj = "17";
-								} else {
-									CodCaj = "12";
-								}
-								break;
-							case "DC":
-								if (!product.getTipArt().equals("CO")) {
-									CodCaj = "16";
-								} else {
-									CodCaj = "11";
-								}
-								break;
-							case "AX":
-								if (!product.getTipArt().equals("CO")) {
-									CodCaj = "22";
-								} else {
-									CodCaj = "14";
-								}
-								break;
-							case "DV":
-								if (!product.getTipArt().equals("CO")) {
-									CodCaj = "16";
-								} else {
-									CodCaj = "11";
-								}
-								break;
-							case "AL":
-								if (!product.getTipArt().equals("CO")) {
-									CodCaj = "24";
-								} else {
-									CodCaj = "24";
-								}
-								break;
-							}
-							break;
-						case "GCL":
-							CodCaj = "30";
-							break;
-						case "BANK_DEPOSIT":
-							CodCaj = "02";
-							break;
-						default:
-							CodCaj = "20";
-							break;
-						}
-					}
-				}
+//				if (product.getFee().getForPagInvoice().toString().contains("EF")) {
+//					CodCaj = "26";
+//					CodTar = "";
+//				} else {
+//					if (pChannels.containsKey("FEE"))
+//						feeChannel = pChannels.get("FEE");
+//					else
+//						feeChannel = "";
+//
+//					if (feeChannel.compareTo("BANK_DEPOSIT") == 0) {
+//						CodCaj = "02";
+//						CodTar = "";
+//						break;
+//					} else {
+//						switch (feeChannel) {
+//						case "VTC":
+//							CodCaj = "20";
+//							break;
+//						case "PSNT":
+//							switch (product.getCodTar()) {
+//							case "MC":
+//								if (!product.getTipArt().equals("CO")) {
+//									CodCaj = "18";
+//								} else {
+//									CodCaj = "13";
+//								}
+//								break;
+//							case "VI":
+//								if (!product.getTipArt().equals("CO")) {
+//									CodCaj = "17";
+//								} else {
+//									CodCaj = "12";
+//								}
+//								break;
+//							case "DC":
+//								if (!product.getTipArt().equals("CO")) {
+//									CodCaj = "16";
+//								} else {
+//									CodCaj = "11";
+//								}
+//								break;
+//							case "AX":
+//								if (!product.getTipArt().equals("CO")) {
+//									CodCaj = "22";
+//								} else {
+//									CodCaj = "14";
+//								}
+//								break;
+//							case "DV":
+//								if (!product.getTipArt().equals("CO")) {
+//									CodCaj = "16";
+//								} else {
+//									CodCaj = "11";
+//								}
+//								break;
+//							case "AL":
+//								if (!product.getTipArt().equals("CO")) {
+//									CodCaj = "24";
+//								} else {
+//									CodCaj = "24";
+//								}
+//								break;
+//							}
+//							break;
+//						case "GCL":
+//							CodCaj = "30";
+//							break;
+//						case "BANK_DEPOSIT":
+//							CodCaj = "02";
+//							break;
+//						default:
+//							CodCaj = "20";
+//							break;
+//						}
+//					}
+//				}
 
 				stmt = database.getConnection().prepareStatement(
 						"INSERT INTO BanTCaj (DocKey, CodCaj, TipDoc, SerDoc, NumDoc, FecDoc, ProCli, "
@@ -1266,9 +1269,9 @@ public class Factura {
 								+ "CodCia, CodEje, CodUsr, FecUsr, Status, AuditLog, RecordID) VALUES (?, ?, 'IN', '', ?, ?, ?, ?, '', '', ?, '', ?, 0, 0, "
 								+ "?, ?, ?, ?, ?, ?, ?, '', 'VAV', ?, 'PE', '', '', '01/01/1900 00:00', 0, 0, 0, 0, '01/01/1900 00:00', '', '01', '05', 'Robot', ?, 'A', ?, ?);");
 
-				stmt.setString(1, "VAV|" + CodCaj + "|IN|" + header.getNumFac() + "|" + product.getForPagInvoice() + "|"
+				stmt.setString(1, "VAV|" + codcajaFee + "|IN|" + header.getNumFac() + "|" + product.getForPagInvoice() + "|"
 						+ header.getNumFac());
-				stmt.setString(2, CodCaj);
+				stmt.setString(2, codcajaFee);
 				stmt.setString(3, header.getNumFac());
 				stmt.setString(4, header.getFecFac());
 				stmt.setString(5, header.getCodCli());

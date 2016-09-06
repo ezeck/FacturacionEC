@@ -295,10 +295,11 @@ public class Flight extends Product {
 				fee.setCodPag(feeCodPag);
 				double feeTotal = 0.0;
 				
-				if(fenixFlightManager.isNotFinalized())
-					feeTotal = fenixFlightManager.FEE_Total_ROMA();
-				else
-					feeTotal = fenixFlightManager.FEE_Total();
+//				if(fenixFlightManager.isNotFinalized())
+//					feeTotal = fenixFlightManager.FEE_Total_ROMA();
+//				else
+//					feeTotal = fenixFlightManager.FEE_Total();
+				feeTotal = fenixFlightManager.FEE_Total_ROMA();
 				
 				// Check discount
 				if (getDiscounts().length() > 0 && getDiscounts().toString().compareTo("[{}]") != 0) {

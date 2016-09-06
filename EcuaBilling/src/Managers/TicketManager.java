@@ -26,11 +26,14 @@ public class TicketManager {
     public ArrayList<Ticket> generateTickets(Product product) throws ErrorFieldNotFound, NoTickets {
         ArrayList<Ticket> tickets = new ArrayList<>();
         int ticketsCount = 0;
+        boolean has_fee = false;
 
         switch (product.getType()){
             case FLIGHT:
                 FenixFlightManager fenixFlightManager = new FenixFlightManager();
                 fenixFlightManager.getTrxData(product.getTransactionID());
+                
+                has_fee = fenixFlightManager.ChargedFee();
 
                 JSONArray paxArray = fenixFlightManager.getPaxes();
                 for(int p = 0; p < paxArray.length(); p++){
@@ -188,7 +191,7 @@ public class TicketManager {
                 break;
         }
 
-        if(ticketsCount == 0)
+        if(ticketsCount == 0 && !has_fee)
             throw new NoTickets("NO TICKETS");
 
         return tickets;

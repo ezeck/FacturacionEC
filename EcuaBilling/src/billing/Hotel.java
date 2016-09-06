@@ -22,11 +22,13 @@ public class Hotel extends Product {
 
 		if (!jObj.has("TRANSACTIONID")) {
 			JSONArray jArr = uManager.getTransactions("HOTEL",	String.valueOf(jObj.getLong("checkout_id")));
-			precobro = false;
 			if (Utils.isJSONEmpty(jArr)) {
 				jArr = uManager.getTransactions("HOTELC",	String.valueOf(jObj.getLong("checkout_id")));
-				precobro = true;
-			}
+				if (!Utils.isJSONEmpty(jArr)) 
+					precobro = true;
+			}else
+				precobro = false;
+				
 			setTransactionID(jObj.getLong("checkout_id"));
 			setPackageID(jObj.getLong("id"));
 
