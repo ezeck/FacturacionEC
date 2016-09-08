@@ -233,8 +233,8 @@ public class Flight extends Product {
 				fee.setChannel(channel);
 
 				String feeForPag = "";
-				if (forPags.containsKey("ETICKET")) {
-					switch (forPags.get("ETICKET")) {
+				if (forPags.containsKey("FEE")) {
+					switch (forPags.get("FEE")) {
 					case "CREDIT_CARD":
 						feeForPag = "CC";
 						break;
@@ -261,8 +261,8 @@ public class Flight extends Product {
 					fee.setForPagInvoice(feeForPagInvoice);
 
 				String feeCodTar;
-				String feeCodPag = fenixFlightManager.getCodTar("ETICKET").toUpperCase();
-				switch (fenixFlightManager.getCodTar("ETICKET")) {
+				String feeCodPag = fenixFlightManager.getCodTar("FEE").toUpperCase();
+				switch (fenixFlightManager.getCodTar("FEE")) {
 				case "MasterCard":
 					feeCodTar = "MC";
 					break;
@@ -289,7 +289,7 @@ public class Flight extends Product {
 					feeCodTar = "";
 				}
 
-				fee.setTipTar(fenixFlightManager.getTipTar("ETICKET"));
+				fee.setTipTar(fenixFlightManager.getTipTar("FEE"));
 				fee.setNumAut(fenixFlightManager.getNumAut("FEE"));
 				fee.setCodTar(feeCodTar);
 				fee.setCodPag(feeCodPag);
@@ -298,7 +298,7 @@ public class Flight extends Product {
 //				if(fenixFlightManager.isNotFinalized())
 //					feeTotal = fenixFlightManager.FEE_Total_ROMA();
 //				else
-//					feeTotal = fenixFlightManager.FEE_Total();
+//					feeTotal = fenixFlightManager.FEE_Total_ROMA() ;
 				feeTotal = fenixFlightManager.FEE_Total_ROMA();
 				
 				// Check discount
@@ -406,8 +406,8 @@ public class Flight extends Product {
 					fee.setChannel(channel);
 
 					String feeForPag = "";
-					if (forPags.containsKey("ETICKET")) {
-						switch (forPags.get("ETICKET")) {
+					if (forPags.containsKey("FEE")) {
+						switch (forPags.get("FEE")) {
 						case "CREDIT_CARD":
 							feeForPag = "CC";
 							break;
@@ -434,8 +434,8 @@ public class Flight extends Product {
 						fee.setForPagInvoice(feeForPagInvoice);
 
 					String feeCodTar;
-					String feeCodPag = fenixFlightManager.getCodTar("ETICKET").toUpperCase();
-					switch (fenixFlightManager.getCodTar("ETICKET")) {
+					String feeCodPag = fenixFlightManager.getCodTar("FEE").toUpperCase();
+					switch (fenixFlightManager.getCodTar("FEE")) {
 					case "MasterCard":
 						feeCodTar = "MC";
 						break;
@@ -462,8 +462,8 @@ public class Flight extends Product {
 						feeCodTar = "";
 					}
 
-					fee.setTipTar(fenixFlightManager.getTipTar("ETICKET"));
-					fee.setNumAut(fenixFlightManager.getNumAut("ETICKET"));
+					fee.setTipTar(fenixFlightManager.getTipTar("FEE"));
+					fee.setNumAut(fenixFlightManager.getNumAut("FEE"));
 					fee.setCodTar(feeCodTar);
 					fee.setCodPag(feeCodPag);
 
@@ -523,7 +523,7 @@ public class Flight extends Product {
 					setTotBIA(fenixFlightManager.getTotBIA());
 					setTotBIC(fenixFlightManager.getTotNet());
 					setTotNet(fenixFlightManager.getTotNet() + fenixFlightManager.getTotBIA());
-					setTotIVA(fenixFlightManager.FEE_Total() - fenixFlightManager.getTotBIA());
+					setTotIVA(fenixFlightManager.FEE_Total_ROMA() - fenixFlightManager.getTotBIA());
 
 					setTotTar(fenixFlightManager.getTotTar());
 					setTotImp(fenixFlightManager.getTotImp());
@@ -531,11 +531,11 @@ public class Flight extends Product {
 				} else if (!toBill()) {
 					setTotBIA(fenixFlightManager.getTotBIA());
 					setTotBIC(0d);
-					setTotNet(fenixFlightManager.FEE_Total() / 1.14);
-					setTotIVA(fenixFlightManager.FEE_Total() - (fenixFlightManager.FEE_Total() / 1.14));
+					setTotNet(fenixFlightManager.FEE_Total_ROMA() / 1.14);
+					setTotIVA(fenixFlightManager.FEE_Total_ROMA() - (fenixFlightManager.FEE_Total_ROMA()  / 1.14));
 
-					setTotTar(fenixFlightManager.FEE_Total() / 1.14);
-					setTotImp(fenixFlightManager.FEE_Total() - (fenixFlightManager.FEE_Total() / 1.14));
+					setTotTar(fenixFlightManager.FEE_Total_ROMA() / 1.14);
+					setTotImp(fenixFlightManager.FEE_Total_ROMA()  - (fenixFlightManager.FEE_Total_ROMA()  / 1.14));
 					setTotTax(0d);
 				}
 			} else {
@@ -583,7 +583,7 @@ public class Flight extends Product {
 				// }
 				// }
 
-				if ((getBillReason().compareTo("TICKET VTC SIN FEE") == 0 || getBillReason().contains("SIN TICKETS SIN FEE")) && fenixFlightManager.FEE_Total() > 0
+				if ((getBillReason().compareTo("TICKET VTC SIN FEE") == 0 || getBillReason().contains("SIN TICKETS SIN FEE")) && fenixFlightManager.FEE_Total_ROMA()  > 0
 						&& (fenixFlightManager.isEmitted() || fenixFlightManager.isCanceled())) {
 					// CHARGE FEE ANYWAY
 					Fee fee = new Fee();
@@ -697,10 +697,10 @@ public class Flight extends Product {
 					fee.setCodPag(feeCodPag);
 
 					double feeTotal = 0.0;
-					if(fenixFlightManager.isNotFinalized())
-						feeTotal = fenixFlightManager.FEE_Total_ROMA();
-					else
-						feeTotal = fenixFlightManager.FEE_Total();
+//					if(fenixFlightManager.isNotFinalized())
+//						feeTotal = fenixFlightManager.FEE_Total_ROMA();
+//					else
+						feeTotal = fenixFlightManager.FEE_Total_ROMA() ;
 					// Check discount
 					if (getDiscounts().length() > 0 && getDiscounts().toString().compareTo("[{}]") != 0) {
 						System.out.println("<" + Utils.getNow() + "> [" + transactionID + "] Tiene DESCUENTO");

@@ -914,15 +914,15 @@ public class Factura {
 						}
 					}
 				}
-				if (flgManager.isNotFinalized()) {
+//				if (flgManager.isNotFinalized()) {
 					try {
 						valor_fee = flgManager.FEE_Total_ROMA();
 					} catch (ErrorFieldNotFound e) {
 						e.printStackTrace();
 					}
-				} else {
-					valor_fee = product.getFEE_TOTAL();
-				}
+//				} else {
+//					valor_fee = product.getFEE_TOTAL();
+//				}
 				codcajaFee = CodCaj;
 				stmt = database.getConnection()
 						.prepareStatement("INSERT INTO AdvFPag (DocKey, TipDoc, NumDoc, FecDoc, CodCli, CodVen, "
@@ -939,7 +939,7 @@ public class Factura {
 				stmt.setString(7, header.getFecFac());
 				stmt.setString(8, product.getFee().getForPagInvoice());
 				stmt.setDouble(9, valor_fee);
-				stmt.setString(10, CodCaj);
+				stmt.setString(10,CodCaj);
 				stmt.setString(11, CodTar);
 				stmt.setString(12, product.getFee().getNumAut());
 				stmt.setString(13, header.getNumFac());
