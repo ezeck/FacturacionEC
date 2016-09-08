@@ -89,7 +89,7 @@ public class Flight extends Product {
 				}
 
 			}
-			if (!hasTicket()) {
+			if (!hasTicket() && !fenixFlightManager.ChargedFee() && isCanceled()) {
 				setBill(false);
 				setBillReason("SIN TICKETS SIN FEE");
 			}

@@ -583,60 +583,62 @@ public class Factura {
 			// FEE
 			if (product.hasFee()) {
 				Fee fee = product.getFee();
-				PreparedStatement stmt = database.getConnection()
-						.prepareStatement("SELECT MAX(RecordID)+1 as maxID FROM AdvRFac");
-				ResultSet rs = stmt.executeQuery();
-				int recordID = 1;
-				if (rs != null) {
-					if (rs.next()) {
-						recordID = rs.getInt("maxID");
+				if (fee.getValTot() > 0) {
+					PreparedStatement stmt = database.getConnection()
+							.prepareStatement("SELECT MAX(RecordID)+1 as maxID FROM AdvRFac");
+					ResultSet rs = stmt.executeQuery();
+					int recordID = 1;
+					if (rs != null) {
+						if (rs.next()) {
+							recordID = rs.getInt("maxID");
+						}
 					}
+
+					stmt = database.getConnection().prepareStatement(
+							"INSERT INTO AdvRFac (DocKey, SerFac, NumFac, FecFac, CodCli, RegIVA, CodVen, CodDep, "
+									+ "CodAlm, Refer, Concepto, CodArt, NomArt, TipArt, Unidad, CodDepR, Cantidad, Tarifa, Precio, PorDes, ValTot, TipIVA, "
+									+ "PorIVA, ValIVA, Comment, TipDoc, Origen, DocOrg, CanEnt, StatusFac, NumOrgCot, RecOrgCot, CanOrgCot, NumOrgPed, "
+									+ "RecOrgPed, CanOrgPed, NumOrgEnt, RecOrgEnt, CanOrgEnt, TipSer, CodAer, NumBol, DesRut, CodOpe, DesSer, NomPax, ValTar, "
+									+ "ValImp, ValTax, ValGDP, ValOpe, ValTra, FecEmi, FecSal, FecRet, ComAer, CodPro, FecCom, TipCom, SerCom, NumCom, AutCom, "
+									+ "FecAsi, NumAsi, CodCia, CodEje, CodUsr, FecUsr, Status, AuditLog, RecordID)"
+									+ " VALUES (?, ?, ?, ?, ?, '3', '', '', '', ?, '', ?, ?, 'S', 'UND', '', 1, 'A', ?, 0, ?, ?, 14, ?, '', ?, ?, ?, "
+									+ "0, 'PE', '', 0, 0, '', 0, 0, '', 0, 0, ?, ?, '', ?, '', ?, ?, ?, ?, 0, 0, 0, 0, ?, ?, ?, 0, '', ?, '01', '', '', "
+									+ "'', '', '', '01', '05', 'Robot', ?, 'A', ?, ?);");
+
+					stmt.setString(1, header.getDocKey());
+					stmt.setString(2, header.getSerFac());
+					stmt.setString(3, header.getNumFac());
+					stmt.setString(4, header.getFecFac());
+					stmt.setString(5, header.getCodCli());
+					stmt.setString(6, header.getRefer());
+					stmt.setString(7, fee.getTipArt());
+					stmt.setString(8, fee.getTipSer());
+					stmt.setDouble(9, fee.getPrecio());
+					stmt.setDouble(10, fee.getValTot());
+					stmt.setString(11, fee.getTipIva());
+					stmt.setDouble(12, fee.getValIVA());
+					stmt.setString(13, header.getTipDoc());
+					stmt.setString(14, header.getOrigen());
+					stmt.setString(15, header.getDocOrg());
+					stmt.setString(16, fee.getTipArt().substring(0, 2));
+					stmt.setString(17, "");
+					stmt.setString(18, product.getDesRut());
+					stmt.setString(19, fee.getTipSer());
+					stmt.setString(20, customer.getNomCli());
+					stmt.setDouble(21, fee.getValTar());
+					stmt.setDouble(22, fee.getValImp());
+					stmt.setString(23, product.getFechaEmision());
+					stmt.setString(24, product.getFechaSalida());
+					stmt.setString(25, product.getFechaRetorno());
+					stmt.setString(26, header.getFecFac());
+					stmt.setString(27, Utils.toSmallDatetime(Utils.getNowForDB()));
+					stmt.setString(28, Utils.getNow().concat(" ADD Robot"));
+					stmt.setInt(29, recordID);
+
+					stmt.executeUpdate();
+
+					stmt.close();
 				}
-
-				stmt = database.getConnection().prepareStatement(
-						"INSERT INTO AdvRFac (DocKey, SerFac, NumFac, FecFac, CodCli, RegIVA, CodVen, CodDep, "
-								+ "CodAlm, Refer, Concepto, CodArt, NomArt, TipArt, Unidad, CodDepR, Cantidad, Tarifa, Precio, PorDes, ValTot, TipIVA, "
-								+ "PorIVA, ValIVA, Comment, TipDoc, Origen, DocOrg, CanEnt, StatusFac, NumOrgCot, RecOrgCot, CanOrgCot, NumOrgPed, "
-								+ "RecOrgPed, CanOrgPed, NumOrgEnt, RecOrgEnt, CanOrgEnt, TipSer, CodAer, NumBol, DesRut, CodOpe, DesSer, NomPax, ValTar, "
-								+ "ValImp, ValTax, ValGDP, ValOpe, ValTra, FecEmi, FecSal, FecRet, ComAer, CodPro, FecCom, TipCom, SerCom, NumCom, AutCom, "
-								+ "FecAsi, NumAsi, CodCia, CodEje, CodUsr, FecUsr, Status, AuditLog, RecordID)"
-								+ " VALUES (?, ?, ?, ?, ?, '3', '', '', '', ?, '', ?, ?, 'S', 'UND', '', 1, 'A', ?, 0, ?, ?, 14, ?, '', ?, ?, ?, "
-								+ "0, 'PE', '', 0, 0, '', 0, 0, '', 0, 0, ?, ?, '', ?, '', ?, ?, ?, ?, 0, 0, 0, 0, ?, ?, ?, 0, '', ?, '01', '', '', "
-								+ "'', '', '', '01', '05', 'Robot', ?, 'A', ?, ?);");
-
-				stmt.setString(1, header.getDocKey());
-				stmt.setString(2, header.getSerFac());
-				stmt.setString(3, header.getNumFac());
-				stmt.setString(4, header.getFecFac());
-				stmt.setString(5, header.getCodCli());
-				stmt.setString(6, header.getRefer());
-				stmt.setString(7, fee.getTipArt());
-				stmt.setString(8, fee.getTipSer());
-				stmt.setDouble(9, fee.getPrecio());
-				stmt.setDouble(10, fee.getValTot());
-				stmt.setString(11, fee.getTipIva());
-				stmt.setDouble(12, fee.getValIVA());
-				stmt.setString(13, header.getTipDoc());
-				stmt.setString(14, header.getOrigen());
-				stmt.setString(15, header.getDocOrg());
-				stmt.setString(16, fee.getTipArt().substring(0, 2));
-				stmt.setString(17, "");
-				stmt.setString(18, product.getDesRut());
-				stmt.setString(19, fee.getTipSer());
-				stmt.setString(20, customer.getNomCli());
-				stmt.setDouble(21, fee.getValTar());
-				stmt.setDouble(22, fee.getValImp());
-				stmt.setString(23, product.getFechaEmision());
-				stmt.setString(24, product.getFechaSalida());
-				stmt.setString(25, product.getFechaRetorno());
-				stmt.setString(26, header.getFecFac());
-				stmt.setString(27, Utils.toSmallDatetime(Utils.getNowForDB()));
-				stmt.setString(28, Utils.getNow().concat(" ADD Robot"));
-				stmt.setInt(29, recordID);
-
-				stmt.executeUpdate();
-
-				stmt.close();
 			}
 		}
 	}
@@ -914,44 +916,46 @@ public class Factura {
 						}
 					}
 				}
-//				if (flgManager.isNotFinalized()) {
-					try {
-						valor_fee = flgManager.FEE_Total_ROMA();
-					} catch (ErrorFieldNotFound e) {
-						e.printStackTrace();
-					}
-//				} else {
-//					valor_fee = product.getFEE_TOTAL();
-//				}
-				codcajaFee = CodCaj;
-				stmt = database.getConnection()
-						.prepareStatement("INSERT INTO AdvFPag (DocKey, TipDoc, NumDoc, FecDoc, CodCli, CodVen, "
-								+ "CodCob, CodDep, Refer, Concepto, FecIng, ForPag, ValPag, CodCaj, CodPag, CtaPag, NumPag, FecVen, Comment, Origen, DocOrg, "
-								+ "FecAsi, NumAsi, CodCia, CodEje, CodUsr, FecUsr, Status, AuditLog, RecordID) VALUES (?, ?, ?, ?, ?, '', '', '', ?, "
-								+ "'', ?, ?, ?, ?, ?, ?, ?, '01/01/1900 00:00', '', ?, ?, '01/01/1900 00:00', '', '01', '05', 'Robot', ?, 'A', ?, ?);");
+				// if (flgManager.isNotFinalized()) {
+				try {
+					valor_fee = flgManager.FEE_Total_ROMA();
+				} catch (ErrorFieldNotFound e) {
+					e.printStackTrace();
+				}
+				// } else {
+				// valor_fee = product.getFEE_TOTAL();
+				// }
+				if (valor_fee > 0) {
+					codcajaFee = CodCaj;
+					stmt = database.getConnection()
+							.prepareStatement("INSERT INTO AdvFPag (DocKey, TipDoc, NumDoc, FecDoc, CodCli, CodVen, "
+									+ "CodCob, CodDep, Refer, Concepto, FecIng, ForPag, ValPag, CodCaj, CodPag, CtaPag, NumPag, FecVen, Comment, Origen, DocOrg, "
+									+ "FecAsi, NumAsi, CodCia, CodEje, CodUsr, FecUsr, Status, AuditLog, RecordID) VALUES (?, ?, ?, ?, ?, '', '', '', ?, "
+									+ "'', ?, ?, ?, ?, ?, ?, ?, '01/01/1900 00:00', '', ?, ?, '01/01/1900 00:00', '', '01', '05', 'Robot', ?, 'A', ?, ?);");
 
-				stmt.setString(1, header.getDocKey());
-				stmt.setString(2, header.getTipDoc());
-				stmt.setString(3, header.getNumFac());
-				stmt.setString(4, header.getFecFac());
-				stmt.setString(5, header.getCodCli());
-				stmt.setString(6, header.getRefer());
-				stmt.setString(7, header.getFecFac());
-				stmt.setString(8, product.getFee().getForPagInvoice());
-				stmt.setDouble(9, valor_fee);
-				stmt.setString(10,CodCaj);
-				stmt.setString(11, CodTar);
-				stmt.setString(12, product.getFee().getNumAut());
-				stmt.setString(13, header.getNumFac());
-				stmt.setString(14, header.getOrigen());
-				stmt.setString(15, header.getDocOrg());
-				stmt.setString(16, Utils.toSmallDatetime(Utils.getNowForDB()));
-				stmt.setString(17, Utils.getNow().concat(" ADD Robot"));
-				stmt.setInt(18, recordID);
+					stmt.setString(1, header.getDocKey());
+					stmt.setString(2, header.getTipDoc());
+					stmt.setString(3, header.getNumFac());
+					stmt.setString(4, header.getFecFac());
+					stmt.setString(5, header.getCodCli());
+					stmt.setString(6, header.getRefer());
+					stmt.setString(7, header.getFecFac());
+					stmt.setString(8, product.getFee().getForPagInvoice());
+					stmt.setDouble(9, valor_fee);
+					stmt.setString(10, CodCaj);
+					stmt.setString(11, CodTar);
+					stmt.setString(12, product.getFee().getNumAut());
+					stmt.setString(13, header.getNumFac());
+					stmt.setString(14, header.getOrigen());
+					stmt.setString(15, header.getDocOrg());
+					stmt.setString(16, Utils.toSmallDatetime(Utils.getNowForDB()));
+					stmt.setString(17, Utils.getNow().concat(" ADD Robot"));
+					stmt.setInt(18, recordID);
 
-				stmt.executeUpdate();
+					stmt.executeUpdate();
 
-				stmt.close();
+					stmt.close();
+				}
 			}
 		}
 	}
@@ -1131,8 +1135,8 @@ public class Factura {
 								+ "CodCia, CodEje, CodUsr, FecUsr, Status, AuditLog, RecordID) VALUES (?, ?, 'IN', '', ?, ?, ?, ?, '', '', ?, '', ?, 0, 0, "
 								+ "?, ?, ?, ?, ?, ?, ?, '', 'VAV', ?, 'PE', '', '', '01/01/1900 00:00', 0, 0, 0, 0, '01/01/1900 00:00', '', '01', '05', 'Robot', ?, 'A', ?, ?);");
 
-				stmt.setString(1, "VAV|" + codcaja + "|IN|" + header.getNumFac() + "|" + product.getForPagInvoice() + "|"
-						+ header.getNumFac());
+				stmt.setString(1, "VAV|" + codcaja + "|IN|" + header.getNumFac() + "|" + product.getForPagInvoice()
+						+ "|" + header.getNumFac());
 				stmt.setString(2, codcaja);
 				stmt.setString(3, header.getNumFac());
 				stmt.setString(4, header.getFecFac());
@@ -1155,7 +1159,7 @@ public class Factura {
 				stmt.executeUpdate();
 				stmt.close();
 			}
-
+			// FEE
 			if (product.getType() == Product.Type.FLIGHT && product.hasFee()) {
 				PreparedStatement stmt = database.getConnection()
 						.prepareStatement("SELECT MAX(RecordID)+1 as maxID FROM BanTCaj");
@@ -1185,116 +1189,120 @@ public class Factura {
 				else
 					feeChannel = "";
 
-//				if (product.getFee().getForPagInvoice().toString().contains("EF")) {
-//					CodCaj = "26";
-//					CodTar = "";
-//				} else {
-//					if (pChannels.containsKey("FEE"))
-//						feeChannel = pChannels.get("FEE");
-//					else
-//						feeChannel = "";
-//
-//					if (feeChannel.compareTo("BANK_DEPOSIT") == 0) {
-//						CodCaj = "02";
-//						CodTar = "";
-//						break;
-//					} else {
-//						switch (feeChannel) {
-//						case "VTC":
-//							CodCaj = "20";
-//							break;
-//						case "PSNT":
-//							switch (product.getCodTar()) {
-//							case "MC":
-//								if (!product.getTipArt().equals("CO")) {
-//									CodCaj = "18";
-//								} else {
-//									CodCaj = "13";
-//								}
-//								break;
-//							case "VI":
-//								if (!product.getTipArt().equals("CO")) {
-//									CodCaj = "17";
-//								} else {
-//									CodCaj = "12";
-//								}
-//								break;
-//							case "DC":
-//								if (!product.getTipArt().equals("CO")) {
-//									CodCaj = "16";
-//								} else {
-//									CodCaj = "11";
-//								}
-//								break;
-//							case "AX":
-//								if (!product.getTipArt().equals("CO")) {
-//									CodCaj = "22";
-//								} else {
-//									CodCaj = "14";
-//								}
-//								break;
-//							case "DV":
-//								if (!product.getTipArt().equals("CO")) {
-//									CodCaj = "16";
-//								} else {
-//									CodCaj = "11";
-//								}
-//								break;
-//							case "AL":
-//								if (!product.getTipArt().equals("CO")) {
-//									CodCaj = "24";
-//								} else {
-//									CodCaj = "24";
-//								}
-//								break;
-//							}
-//							break;
-//						case "GCL":
-//							CodCaj = "30";
-//							break;
-//						case "BANK_DEPOSIT":
-//							CodCaj = "02";
-//							break;
-//						default:
-//							CodCaj = "20";
-//							break;
-//						}
-//					}
-//				}
+				// if
+				// (product.getFee().getForPagInvoice().toString().contains("EF"))
+				// {
+				// CodCaj = "26";
+				// CodTar = "";
+				// } else {
+				// if (pChannels.containsKey("FEE"))
+				// feeChannel = pChannels.get("FEE");
+				// else
+				// feeChannel = "";
+				//
+				// if (feeChannel.compareTo("BANK_DEPOSIT") == 0) {
+				// CodCaj = "02";
+				// CodTar = "";
+				// break;
+				// } else {
+				// switch (feeChannel) {
+				// case "VTC":
+				// CodCaj = "20";
+				// break;
+				// case "PSNT":
+				// switch (product.getCodTar()) {
+				// case "MC":
+				// if (!product.getTipArt().equals("CO")) {
+				// CodCaj = "18";
+				// } else {
+				// CodCaj = "13";
+				// }
+				// break;
+				// case "VI":
+				// if (!product.getTipArt().equals("CO")) {
+				// CodCaj = "17";
+				// } else {
+				// CodCaj = "12";
+				// }
+				// break;
+				// case "DC":
+				// if (!product.getTipArt().equals("CO")) {
+				// CodCaj = "16";
+				// } else {
+				// CodCaj = "11";
+				// }
+				// break;
+				// case "AX":
+				// if (!product.getTipArt().equals("CO")) {
+				// CodCaj = "22";
+				// } else {
+				// CodCaj = "14";
+				// }
+				// break;
+				// case "DV":
+				// if (!product.getTipArt().equals("CO")) {
+				// CodCaj = "16";
+				// } else {
+				// CodCaj = "11";
+				// }
+				// break;
+				// case "AL":
+				// if (!product.getTipArt().equals("CO")) {
+				// CodCaj = "24";
+				// } else {
+				// CodCaj = "24";
+				// }
+				// break;
+				// }
+				// break;
+				// case "GCL":
+				// CodCaj = "30";
+				// break;
+				// case "BANK_DEPOSIT":
+				// CodCaj = "02";
+				// break;
+				// default:
+				// CodCaj = "20";
+				// break;
+				// }
+				// }
+				// }
+				if (product.getFEE_TOTAL() > 0) {
 
-				stmt = database.getConnection().prepareStatement(
-						"INSERT INTO BanTCaj (DocKey, CodCaj, TipDoc, SerDoc, NumDoc, FecDoc, ProCli, "
-								+ "NomBen, CodVen, CodDep, Refer, Concepto, Importe, TotDeb, TotCre, Saldo, NumCob, ForPag, CodPag, CtaPag, NumPag, "
-								+ "FecVen, Comment, Origen, DocOrg, StatusCaj, CodBan, NumDep, FecDep, ValCom, ValRIR, ValRIVA, ValDep, FecAsi, NumAsi, "
-								+ "CodCia, CodEje, CodUsr, FecUsr, Status, AuditLog, RecordID) VALUES (?, ?, 'IN', '', ?, ?, ?, ?, '', '', ?, '', ?, 0, 0, "
-								+ "?, ?, ?, ?, ?, ?, ?, '', 'VAV', ?, 'PE', '', '', '01/01/1900 00:00', 0, 0, 0, 0, '01/01/1900 00:00', '', '01', '05', 'Robot', ?, 'A', ?, ?);");
+					stmt = database.getConnection().prepareStatement(
+							"INSERT INTO BanTCaj (DocKey, CodCaj, TipDoc, SerDoc, NumDoc, FecDoc, ProCli, "
+									+ "NomBen, CodVen, CodDep, Refer, Concepto, Importe, TotDeb, TotCre, Saldo, NumCob, ForPag, CodPag, CtaPag, NumPag, "
+									+ "FecVen, Comment, Origen, DocOrg, StatusCaj, CodBan, NumDep, FecDep, ValCom, ValRIR, ValRIVA, ValDep, FecAsi, NumAsi, "
+									+ "CodCia, CodEje, CodUsr, FecUsr, Status, AuditLog, RecordID) VALUES (?, ?, 'IN', '', ?, ?, ?, ?, '', '', ?, '', ?, 0, 0, "
+									+ "?, ?, ?, ?, ?, ?, ?, '', 'VAV', ?, 'PE', '', '', '01/01/1900 00:00', 0, 0, 0, 0, '01/01/1900 00:00', '', '01', '05', 'Robot', ?, 'A', ?, ?);");
 
-				stmt.setString(1, "VAV|" + codcajaFee + "|IN|" + header.getNumFac() + "|" + product.getForPagInvoice() + "|"
-						+ header.getNumFac());
-				stmt.setString(2, codcajaFee);
-				stmt.setString(3, header.getNumFac());
-				stmt.setString(4, header.getFecFac());
-				stmt.setString(5, header.getCodCli());
-				stmt.setString(6, customer.getNomCli());
-				stmt.setString(7, header.getRefer());
-				stmt.setDouble(8, product.getFEE_TOTAL());
-				stmt.setDouble(9, product.getFEE_TOTAL());
-				stmt.setString(10, header.getNumFac());
-				stmt.setString(11, product.getFee().getForPagInvoice());
-				stmt.setString(12, CodTar);
-				stmt.setString(13, product.getFee().getNumAut());
-				stmt.setString(14, header.getNumFac());
-				// stmt.setString(15,
-				// Utils.toSmallDatetime(Utils.getNowForDB()));
-				stmt.setString(15, header.getFecFac());
-				stmt.setString(16, header.getDocOrg());
-				stmt.setString(17, Utils.toSmallDatetime(Utils.getNowForDB()));
-				stmt.setString(18, Utils.getNow().concat(" ADD Robot"));
-				stmt.setInt(19, recordID);
+					stmt.setString(1, "VAV|" + codcajaFee + "|IN|" + header.getNumFac() + "|"
+							+ product.getForPagInvoice() + "|" + header.getNumFac());
+					stmt.setString(2, codcajaFee);
+					stmt.setString(3, header.getNumFac());
+					stmt.setString(4, header.getFecFac());
+					stmt.setString(5, header.getCodCli());
+					stmt.setString(6, customer.getNomCli());
+					stmt.setString(7, header.getRefer());
+					stmt.setDouble(8, product.getFEE_TOTAL());
+					stmt.setDouble(9, product.getFEE_TOTAL());
+					stmt.setString(10, header.getNumFac());
+					stmt.setString(11, product.getFee().getForPagInvoice());
+					stmt.setString(12, CodTar);
+					stmt.setString(13, product.getFee().getNumAut());
+					stmt.setString(14, header.getNumFac());
+					// stmt.setString(15,
+					// Utils.toSmallDatetime(Utils.getNowForDB()));
+					stmt.setString(15, header.getFecFac());
+					stmt.setString(16, header.getDocOrg());
+					stmt.setString(17, Utils.toSmallDatetime(Utils.getNowForDB()));
+					stmt.setString(18, Utils.getNow().concat(" ADD Robot"));
+					stmt.setInt(19, recordID);
 
-				stmt.executeUpdate();
+					stmt.executeUpdate();
 
-				stmt.close();
+					stmt.close();
+				}
 			}
 		}
 	}
