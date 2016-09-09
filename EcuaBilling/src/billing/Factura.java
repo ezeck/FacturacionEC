@@ -656,7 +656,7 @@ public class Factura {
 				flgManager.getTrxData(transactionID);
 
 			}
-			if (product.toBill()) {
+			if (product.toBill() && product.getValPag()>0) {
 				if (iD != null) {
 					PreparedStatement _stmt = database.getConnection()
 							.prepareStatement("DELETE FROM AdvFPag WHERE NumDoc = ?");

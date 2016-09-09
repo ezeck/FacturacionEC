@@ -40,7 +40,7 @@ public class Main {
 
 	public static void main(String[] args) throws IOException {
 
-		// database = new Database("PROD");
+//		 database = new Database("PROD");
 		database = new Database("TEST");
 
 		ticketManager = new TicketManager();

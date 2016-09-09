@@ -736,6 +736,7 @@ public class Flight extends Product {
 
 					setFee(fee);
 					setHasFee(true);
+					setBill(true);
 					System.out
 							.println("<" + Utils.getNow() + "> [" + transactionID + "] TICKET Cancelado VTC con Fee.");
 				} else {
