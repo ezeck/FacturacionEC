@@ -15,7 +15,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import Utils.*;
-import insResult.InsResult;
 
 import org.xml.sax.SAXException;
 
@@ -33,7 +32,6 @@ public class Main {
 	static TicketManager ticketManager = null;
 	static ProductManager productManager = null;
 	static CustomerManager customerManager = null;
-	public static InsResult insResultManager = null;
 	public static String numero_serie = "001003";
 	public static String numero_serieNC = "001002";
 	public static int wasbilled = 0;
@@ -46,7 +44,6 @@ public class Main {
 		ticketManager = new TicketManager();
 		productManager = new ProductManager(database);
 		customerManager = new CustomerManager(database);
-		insResultManager = new InsResult();
 
 		// Notas de credito TRXID
 		if (args[0].contentEquals("NC") && args.length == 4)
@@ -287,9 +284,6 @@ public class Main {
 					if (pendingData != null)
 						pendingData.setReason("Excepcion SQL");
 
-					insResultManager.doOne(String.valueOf(flight.getTransactionID()), "EC" + "-" + database.getEnv(),
-							"ERROR: SQL", e.getMessage());
-
 					System.out.println("[DEBUG] " + flight.getTransactionID() + ", Excepcion SQL");
 					e.printStackTrace();
 				} catch (AlreadyExists alreadyExists) {
@@ -304,10 +298,6 @@ public class Main {
 						agencyData.setReason("Factura existente");
 					if (pendingData != null)
 						pendingData.setReason("Factura existente");
-
-					insResultManager.doOne(String.valueOf(flight.getTransactionID()), "EC" + "-" + database.getEnv(),
-							"INFO: ALREADY DONE", "");
-
 					System.out.println("[DEBUG] " + flight.getTransactionID() + ", Factura existente");
 				} catch (NoPayments noPayments) {
 
@@ -321,10 +311,6 @@ public class Main {
 						agencyData.setReason("Sin cobros");
 					if (pendingData != null)
 						pendingData.setReason("Sin cobros");
-
-					insResultManager.doOne(String.valueOf(flight.getTransactionID()), "EC" + "-" + database.getEnv(),
-							"INFO: NO PAYMENTS", "");
-
 					System.out.println("[DEBUG] " + flight.getTransactionID() + ", Sin cobros");
 				} catch (ErrorFieldNotFound errorFieldNotFound) {
 
@@ -336,9 +322,6 @@ public class Main {
 						agencyData.setReason("No se ha encontrado un campo JSON");
 					if (pendingData != null)
 						pendingData.setReason("No se ha encontrado un campo JSON");
-
-					insResultManager.doOne(String.valueOf(flight.getTransactionID()), "EC" + "-" + database.getEnv(),
-							"ERROR: JSON FIELD", errorFieldNotFound.getMessage());
 
 					System.out.println("[DEBUG] " + flight.getTransactionID() + ", No se ha encontrado un campo JSON");
 					errorFieldNotFound.printStackTrace();
@@ -354,9 +337,6 @@ public class Main {
 					if (pendingData != null)
 						pendingData.setReason("No Local");
 
-					insResultManager.doOne(String.valueOf(flight.getTransactionID()), "EC" + "-" + database.getEnv(),
-							"INFO: NOT LOCAL", "");
-
 					System.out.println("[DEBUG] " + flight.getTransactionID() + ", No Local");
 				} catch (WithDiscount withDiscount) {
 					_continue = false;
@@ -368,9 +348,6 @@ public class Main {
 					if (pendingData != null)
 						pendingData.setReason("Con Descuento");
 
-					insResultManager.doOne(String.valueOf(flight.getTransactionID()), "EC" + "-" + database.getEnv(),
-							"INFO: HAS DISCOUNTS", "");
-
 					System.out.println("[DEBUG] " + flight.getTransactionID() + ", Con Descuento");
 				} catch (CanceledWithCoupon canceledWithCoupon) {
 					_continue = false;
@@ -381,10 +358,6 @@ public class Main {
 						agencyData.setReason("Cancelada con Cupon");
 					if (pendingData != null)
 						pendingData.setReason("Cancelada con Cupon");
-
-					insResultManager.doOne(String.valueOf(flight.getTransactionID()), "EC" + "-" + database.getEnv(),
-							"INFO: CANCELED WITH DISCOUNT", "");
-
 					System.out.println("[DEBUG] " + flight.getTransactionID() + ", Cancelada con Cupon");
 				} catch (NotFinalized notFinalized) {
 
@@ -400,9 +373,6 @@ public class Main {
 					if (pendingData != null)
 						pendingData.setReason("No Finalizada");
 
-					insResultManager.doOne(String.valueOf(flight.getTransactionID()), "EC" + "-" + database.getEnv(),
-							"INFO: NOT YET FINALIZED", "");
-
 					System.out.println("[DEBUG] " + flight.getTransactionID() + ", No Finalizada");
 				} catch (CanceledWithoutTickets canceledWithoutTickets) {
 
@@ -416,19 +386,11 @@ public class Main {
 						agencyData.setReason("Cancelada Sin Tickets");
 					if (pendingData != null)
 						pendingData.setReason("Cancelada Sin Tickets");
-
-					insResultManager.doOne(String.valueOf(flight.getTransactionID()), "EC" + "-" + database.getEnv(),
-							"INFO: CANCELED WITHOUT TICKETS", "");
-
 					System.out.println("[DEBUG] " + flight.getTransactionID() + ", Cancelada Sin Tickets");
 				} catch (MenorADiciembre2015 menorADiciembre2015) {
 					System.out.println(menorADiciembre2015.getMessage());
 					if (database.getEnv().contentEquals("PROD"))
 						Utils.updateOneTrx(flight.getTransactionID(), "DSP_BILL_FLG_HDR", 11);
-
-					insResultManager.doOne(String.valueOf(flight.getTransactionID()), "EC" + "-" + database.getEnv(),
-							"INFO: 2015", "");
-
 					System.out.println("[DEBUG] " + flight.getTransactionID() + ", MenorADiciembre2015");
 				} catch (DiscountDifferences discountDifferences) {
 
@@ -450,10 +412,6 @@ public class Main {
 						agencyData.setReason("Ticket VTC Sin Fee");
 					if (pendingData != null)
 						pendingData.setReason("Ticket VTC Sin Fee");
-
-					insResultManager.doOne(String.valueOf(flight.getTransactionID()), "EC" + "-" + database.getEnv(),
-							"INFO: VTC WITHOUT FEE", "");
-
 					System.out.println("[DEBUG] " + flight.getTransactionID() + ", Ticket VTC Sin Fee");
 				} catch (ONATicket onaTicket) {
 					onaTicket.printStackTrace();
@@ -469,9 +427,6 @@ public class Main {
 						tickets = ticketManager.generateTickets(flight);
 					} catch (ErrorFieldNotFound errorFieldNotFound) {
 						System.out.println(errorFieldNotFound.getMessage());
-						insResultManager.doOne(String.valueOf(flight.getTransactionID()),
-								"EC" + "-" + database.getEnv(), "ERROR: CANCELED WITH DISCOUNT",
-								errorFieldNotFound.getMessage());
 					} catch (NoTickets noTickets) {
 						LogRobot(String.valueOf(jObj.getLong("TRANSACTIONID")), "FLIGHT", "No tiene boletos", "", 0,
 								jObj.getString("ISAGENCY").contains("Y") ? 1 : 0, database.getEnv());
@@ -479,8 +434,6 @@ public class Main {
 						System.out.println("[DEBUG] " + flight.getTransactionID() + ", No tiene boletos");
 						if (database.getEnv().contentEquals("PROD"))
 							Utils.updateOneTrx(flight.getTransactionID(), "DSP_BILL_FLG_HDR", 27);
-						insResultManager.doOne(String.valueOf(flight.getTransactionID()),
-								"EC" + "-" + database.getEnv(), "INFO: WITHOUT TICKETS", "");
 
 					}
 
@@ -514,8 +467,6 @@ public class Main {
 
 							System.out.println(e.getMessage());
 							e.printStackTrace();
-							insResultManager.doOne(String.valueOf(flight.getTransactionID()),
-									"EC" + "-" + database.getEnv(), "ERROR: CLIENT", e.getMessage());
 							System.out.println("[DEBUG] " + flight.getTransactionID() + ", Error en cliente");
 						} catch (InvoiceInvalidRUC invoiceInvalidRUC) {
 							LogRobot(String.valueOf(jObj.getLong("TRANSACTIONID")), "FLIGHT",
@@ -526,14 +477,10 @@ public class Main {
 									"[DEBUG] " + flight.getTransactionID() + ", RUC Invalido en solicitud de factura");
 							if (database.getEnv().contentEquals("PROD"))
 								Utils.updateOneTrx(flight.getTransactionID(), "DSP_BILL_FLG_HDR", 8);
-							insResultManager.doOne(String.valueOf(flight.getTransactionID()),
-									"EC" + "-" + database.getEnv(), "INFO: INVALID DOC IN INVOICE REQUEST", "");
 						} catch (NoClientName noClientName) {
 							noClientName.printStackTrace();
 							if (database.getEnv().contentEquals("PROD"))
 								Utils.updateOneTrx(flight.getTransactionID(), "DSP_BILL_FLG_HDR", 19);
-							insResultManager.doOne(String.valueOf(flight.getTransactionID()),
-									"EC" + "-" + database.getEnv(), "INFO: CLIENT HAS NO NAME", "");
 						}
 
 						// Si el cliente es valido, se hace la Factura
@@ -605,8 +552,6 @@ public class Main {
 											jObj.getString("ISAGENCY").contains("Y") ? 1 : 0, database.getEnv());
 									if (database.getEnv().contentEquals("PROD"))
 										Utils.updateOneTrx(TransactionID, "DSP_BILL_" + prodType + "_HDR", 1);
-									insResultManager.doOne(String.valueOf(flight.getTransactionID()),
-											"EC" + "-" + database.getEnv(), "INFO: DONE -> " + header.getNumFac(), "");
 								}
 
 							} catch (SQLException e) {
@@ -618,8 +563,6 @@ public class Main {
 								System.out.println("[DEBUG] " + flight.getTransactionID() + ", Excepcion SQL");
 								database.rollback();
 								e.printStackTrace();
-								insResultManager.doOne(String.valueOf(flight.getTransactionID()),
-										"EC" + "-" + database.getEnv(), "ERROR: SQL", e.getMessage());
 								// } catch (SinCobros e) {
 								// // TODO Auto-generated catch block
 								// System.out.println(e.getMessage());
@@ -767,9 +710,6 @@ public class Main {
 					if (pendingData != null)
 						pendingData.setReason("Excepcion SQL");
 
-					insResultManager.doOne(String.valueOf(hotel.getTransactionID()), "EC" + "-" + database.getEnv(),
-							"ERROR: SQL", e.getMessage());
-
 					System.out.println("[DEBUG] " + hotel.getTransactionID() + ", Excepcion SQL");
 
 					e.printStackTrace();
@@ -787,9 +727,6 @@ public class Main {
 					if (pendingData != null)
 						pendingData.setReason("Factura existente");
 
-					insResultManager.doOne(String.valueOf(hotel.getTransactionID()), "EC" + "-" + database.getEnv(),
-							"INFO: Factura Existente", "");
-
 					System.out.println("[DEBUG] " + hotel.getTransactionID() + ", Factura existente");
 
 				} catch (NoPayments noPayments) {
@@ -805,9 +742,6 @@ public class Main {
 					if (pendingData != null)
 						pendingData.setReason("Sin cobros");
 
-					insResultManager.doOne(String.valueOf(hotel.getTransactionID()), "EC" + "-" + database.getEnv(),
-							"INFO: SIN COBROS", "");
-
 					System.out.println("[DEBUG] " + hotel.getTransactionID() + ", Sin cobros");
 
 				} catch (ErrorFieldNotFound errorFieldNotFound) {
@@ -819,9 +753,6 @@ public class Main {
 						agencyData.setReason("No se ha encontrado un campo JSON");
 					if (pendingData != null)
 						pendingData.setReason("No se ha encontrado un campo JSON");
-
-					insResultManager.doOne(String.valueOf(hotel.getTransactionID()), "EC" + "-" + database.getEnv(),
-							"ERROR: JSON ERROR", errorFieldNotFound.getMessage());
 
 					System.out.println("[DEBUG] " + hotel.getTransactionID() + ", No se encontro un campo JSON");
 
@@ -838,9 +769,6 @@ public class Main {
 						agencyData.setReason("No Local");
 					if (pendingData != null)
 						pendingData.setReason("No Local");
-
-					insResultManager.doOne(String.valueOf(hotel.getTransactionID()), "EC" + "-" + database.getEnv(),
-							"INFO: NOT LOCAL", "");
 					System.out.println("[DEBUG] " + hotel.getTransactionID() + ", No Local");
 
 				} catch (WithDiscount withDiscount) {
@@ -853,9 +781,6 @@ public class Main {
 						agencyData.setReason("Con Descuento");
 					if (pendingData != null)
 						pendingData.setReason("Con Descuento");
-
-					insResultManager.doOne(String.valueOf(hotel.getTransactionID()), "EC" + "-" + database.getEnv(),
-							"INFO: CON DESCUENTO", "");
 					System.out.println("[DEBUG] " + hotel.getTransactionID() + ", Con Descuento");
 
 				} catch (CanceledWithCoupon canceledWithCoupon) {
@@ -870,9 +795,6 @@ public class Main {
 						agencyData.setReason("Cancelada con Cupon");
 					if (pendingData != null)
 						pendingData.setReason("Cancelada con Cupon");
-
-					insResultManager.doOne(String.valueOf(hotel.getTransactionID()), "EC" + "-" + database.getEnv(),
-							"INFO: CANCELADA CON CUPON", "");
 					System.out.println("[DEBUG] " + hotel.getTransactionID() + ", Cancelada con Cupon");
 
 				} catch (TravelAndNoFee travelAndNoFee) {
@@ -887,43 +809,30 @@ public class Main {
 						agencyData.setReason("Hotel TRN Sin FEE");
 					if (pendingData != null)
 						pendingData.setReason("Hotel TRN Sin FEE");
-
-					insResultManager.doOne(String.valueOf(hotel.getTransactionID()), "EC" + "-" + database.getEnv(),
-							"INFO: HOTEL TRN SIN FEE", "");
 					System.out.println("[DEBUG] " + hotel.getTransactionID() + ", Hotel TRN Sin Fee");
 
 				} catch (NotFinalized notFinalized) {
 
 					LogRobot(String.valueOf(jObj.getLong("TRANSACTIONID")), "HOTEL", notFinalized.getMessage(), "", 0,
 							jObj.getString("ISAGENCY").contains("Y") ? 1 : 0, database.getEnv());
-					insResultManager.doOne(String.valueOf(hotel.getTransactionID()), "EC" + "-" + database.getEnv(),
-							"INFO: NOT FINALIZED", "");
 					System.out.println(notFinalized.getMessage());
 				} catch (CanceledWithoutTickets canceledWithoutTickets) {
 					LogRobot(String.valueOf(jObj.getLong("TRANSACTIONID")), "HOTEL", "Hotel TRN Sin FEE", "", 0,
 							jObj.getString("ISAGENCY").contains("Y") ? 1 : 0, database.getEnv());
-					insResultManager.doOne(String.valueOf(hotel.getTransactionID()), "EC" + "-" + database.getEnv(),
-							"INFO: CANCELADA SIN TICKETS", "");
 					System.out.println(canceledWithoutTickets.getMessage());
 				} catch (MenorADiciembre2015 menorADiciembre2015) {
 					System.out.println(menorADiciembre2015.getMessage());
 					if (database.getEnv().contentEquals("PROD"))
 						Utils.updateOneTrx(hotel.getTransactionID(),
 								(precobro ? "DSP_BILL_HOT_COM_HDR" : "DSP_BILL_HOT_HDR"), 11);
-					insResultManager.doOne(String.valueOf(hotel.getTransactionID()), "EC" + "-" + database.getEnv(),
-							"INFO: 2015", "");
 				} catch (DiscountDifferences discountDifferences) {
 					System.out.println(discountDifferences.getMessage());
 					if (database.getEnv().contentEquals("PROD"))
 						Utils.updateOneTrx(hotel.getTransactionID(),
 								(precobro ? "DSP_BILL_HOT_COM_HDR" : "DSP_BILL_HOT_HDR"), 15);
 					System.out.println("[DEBUG] " + hotel.getTransactionID() + ", Diferencia en descuentos");
-					insResultManager.doOne(String.valueOf(hotel.getTransactionID()), "EC" + "-" + database.getEnv(),
-							"INFO: DIFERENCIA EN DESCUENTOS", "");
 				} catch (ONATicket onaTicket) {
 					onaTicket.printStackTrace();
-					insResultManager.doOne(String.valueOf(hotel.getTransactionID()), "EC" + "-" + database.getEnv(),
-							"INFO: ONA TICKET", "");
 				}
 
 				// If there are no exceptions - PRODUCT INDEPENDENT?
@@ -933,14 +842,10 @@ public class Main {
 					try {
 						tickets = ticketManager.generateTickets(hotel);
 					} catch (ErrorFieldNotFound errorFieldNotFound) {
-						insResultManager.doOne(String.valueOf(hotel.getTransactionID()), "EC" + "-" + database.getEnv(),
-								"ERROR: TICKET", errorFieldNotFound.getMessage());
 						errorFieldNotFound.printStackTrace();
 					} catch (NoTickets noTickets) {
 						LogRobot(String.valueOf(jObj.getLong("TRANSACTIONID")), "HOTEL", noTickets.getMessage(), "", 0,
 								jObj.getString("ISAGENCY").contains("Y") ? 0 : 0, database.getEnv());
-						insResultManager.doOne(String.valueOf(hotel.getTransactionID()), "EC" + "-" + database.getEnv(),
-								"ERROR: TICKET", noTickets.getMessage());
 						System.out.println(noTickets.getMessage());
 					}
 
@@ -976,8 +881,6 @@ public class Main {
 							if (pendingData != null)
 								pendingData.setReason("Error al crear cliente");
 
-							insResultManager.doOne(String.valueOf(hotel.getTransactionID()),
-									"EC" + "-" + database.getEnv(), "ERROR: SQL AL CREAR EL CLIENTE", e.getMessage());
 
 							System.out.println("[DEBUG] " + hotel.getTransactionID() + ", Error al crear cliente");
 
@@ -999,12 +902,8 @@ public class Main {
 							if (database.getEnv().contentEquals("PROD"))
 								Utils.updateOneTrx(hotel.getTransactionID(),
 										(precobro ? "DSP_BILL_HOT_COM_HDR" : "DSP_BILL_HOT_HDR"), 8);
-							insResultManager.doOne(String.valueOf(hotel.getTransactionID()),
-									"EC" + "-" + database.getEnv(), "INFO: RUC INVALIDO", "");
 
 						} catch (NoClientName noClientName) {
-							insResultManager.doOne(String.valueOf(hotel.getTransactionID()),
-									"EC" + "-" + database.getEnv(), "INFO: NOMBRE INVALIDO", "");
 							noClientName.printStackTrace();
 						}
 
@@ -1062,8 +961,6 @@ public class Main {
 										Utils.updateOneTrx(TransactionID, "DSP_BILL_" + prodType + "_HDR", 1);
 									System.out.println("[DEBUG] " + hotel.getTransactionID() + ", FACTURADA - "
 											+ header.getNumFac());
-									insResultManager.doOne(String.valueOf(hotel.getTransactionID()),
-											"EC" + "-" + database.getEnv(), "INFO: DONE -> " + header.getNumFac(), "");
 								}
 
 							} catch (SQLException e) {
@@ -1075,8 +972,6 @@ public class Main {
 
 								database.rollback();
 								e.printStackTrace();
-								insResultManager.doOne(String.valueOf(hotel.getTransactionID()),
-										"EC" + "-" + database.getEnv(), "ERROR: SQL", e.getMessage());
 
 							}
 						} else {
@@ -3377,33 +3272,25 @@ public class Main {
 								+ advefac.getString("NumFac") + "] Nota de Credito creada: " + numDev);
 
 						database.commit();
-						insResultManager.doOne(trxID, "EC" + "-" + database.getEnv(), "INFO: NC DONE " + numDev, "");
 						stmt.close();
 					} else {
 						LogRobot(trxID, "NC", "Detalles de Servicio en Factura Original no encontrados", numDev, 1, 0,
 								database.getEnv());
 						System.out.println("Detalles de Servicio en Factura Original no encontrados.");
-						insResultManager.doOne(trxID, "EC" + "-" + database.getEnv(),
-								"INFO: Detalles de Servicio en Factura Original no encontrados", "");
 					}
 
 				} else {
 					LogRobot(trxID, "NC", "Cabecera de Factura Original no encontrada", numDev, 1, 0,
 							database.getEnv());
 					System.out.println("Cabecera de Factura Original no encontrada.");
-					insResultManager.doOne(trxID, "EC" + "-" + database.getEnv(),
-							"INFO: Cabecera de Factura Original no encontrada.", "");
 				}
 			} else {
 				LogRobot(trxID, "NC", "Factura Original no encontrados", numDev, 1, 0, database.getEnv());
 				System.out.println("Factura Original no encontrados.");
-				insResultManager.doOne(trxID, "EC" + "-" + database.getEnv(),
-						"INFO: Detalles de Servicio en Factura Original no encontrados", "");
 			}
 
 		} catch (SQLException e) {
 			e.printStackTrace();
-			insResultManager.doOne(trxID, "EC" + "-" + database.getEnv(), "ERROR: SQL", e.getMessage());
 		}
 
 	}
@@ -3634,9 +3521,6 @@ public class Main {
 			if (pendingData != null)
 				pendingData.setReason("Excepcion SQL");
 
-			insResultManager.doOne(String.valueOf(flight.getTransactionID()), "EC" + "-" + database.getEnv(),
-					"ERROR: SQL", e.getMessage());
-
 			System.out.println("[DEBUG] " + flight.getTransactionID() + ", Excepcion SQL");
 			e.printStackTrace();
 		} catch (AlreadyExists alreadyExists) {
@@ -3649,9 +3533,6 @@ public class Main {
 			if (pendingData != null)
 				pendingData.setReason("Factura existente");
 
-			insResultManager.doOne(String.valueOf(flight.getTransactionID()), "EC" + "-" + database.getEnv(),
-					"INFO: ALREADY DONE", "");
-
 			System.out.println("[DEBUG] " + flight.getTransactionID() + ", Factura existente");
 		} catch (NoPayments noPayments) {
 			_continue = false;
@@ -3662,10 +3543,6 @@ public class Main {
 				agencyData.setReason("Sin cobros");
 			if (pendingData != null)
 				pendingData.setReason("Sin cobros");
-
-			insResultManager.doOne(String.valueOf(flight.getTransactionID()), "EC" + "-" + database.getEnv(),
-					"INFO: NO PAYMENTS", "");
-
 			System.out.println("[DEBUG] " + flight.getTransactionID() + ", Sin cobros");
 		} catch (ErrorFieldNotFound errorFieldNotFound) {
 			_continue = false;
@@ -3674,9 +3551,6 @@ public class Main {
 				agencyData.setReason("No se ha encontrado un campo JSON");
 			if (pendingData != null)
 				pendingData.setReason("No se ha encontrado un campo JSON");
-
-			insResultManager.doOne(String.valueOf(flight.getTransactionID()), "EC" + "-" + database.getEnv(),
-					"ERROR: JSON FIELD", errorFieldNotFound.getMessage());
 
 			System.out.println("[DEBUG] " + flight.getTransactionID() + ", No se ha encontrado un campo JSON");
 			errorFieldNotFound.printStackTrace();
@@ -3689,10 +3563,6 @@ public class Main {
 				agencyData.setReason("No Local");
 			if (pendingData != null)
 				pendingData.setReason("No Local");
-
-			insResultManager.doOne(String.valueOf(flight.getTransactionID()), "EC" + "-" + database.getEnv(),
-					"INFO: NOT LOCAL", "");
-
 			System.out.println("[DEBUG] " + flight.getTransactionID() + ", No Local");
 		} catch (WithDiscount withDiscount) {
 			_continue = false;
@@ -3703,10 +3573,6 @@ public class Main {
 				agencyData.setReason("Con Descuento");
 			if (pendingData != null)
 				pendingData.setReason("Con Descuento");
-
-			insResultManager.doOne(String.valueOf(flight.getTransactionID()), "EC" + "-" + database.getEnv(),
-					"INFO: HAS DISCOUNTS", "");
-
 			System.out.println("[DEBUG] " + flight.getTransactionID() + ", Con Descuento");
 		} catch (CanceledWithCoupon canceledWithCoupon) {
 			_continue = false;
@@ -3717,10 +3583,6 @@ public class Main {
 				agencyData.setReason("Cancelada con Cupon");
 			if (pendingData != null)
 				pendingData.setReason("Cancelada con Cupon");
-
-			insResultManager.doOne(String.valueOf(flight.getTransactionID()), "EC" + "-" + database.getEnv(),
-					"INFO: CANCELED WITH DISCOUNT", "");
-
 			System.out.println("[DEBUG] " + flight.getTransactionID() + ", Cancelada con Cupon");
 		} catch (NotFinalized notFinalized) {
 			_continue = false;
@@ -3733,9 +3595,6 @@ public class Main {
 			if (pendingData != null)
 				pendingData.setReason("No Finalizada");
 
-			insResultManager.doOne(String.valueOf(flight.getTransactionID()), "EC" + "-" + database.getEnv(),
-					"INFO: NOT YET FINALIZED", "");
-
 			System.out.println("[DEBUG] " + flight.getTransactionID() + ", No Finalizada");
 		} catch (CanceledWithoutTickets canceledWithoutTickets) {
 			_continue = false;
@@ -3746,19 +3605,11 @@ public class Main {
 				agencyData.setReason("Cancelada Sin Tickets");
 			if (pendingData != null)
 				pendingData.setReason("Cancelada Sin Tickets");
-
-			insResultManager.doOne(String.valueOf(flight.getTransactionID()), "EC" + "-" + database.getEnv(),
-					"INFO: CANCELED WITHOUT TICKETS", "");
-
 			System.out.println("[DEBUG] " + flight.getTransactionID() + ", Cancelada Sin Tickets");
 		} catch (MenorADiciembre2015 menorADiciembre2015) {
 			System.out.println(menorADiciembre2015.getMessage());
 			if (database.getEnv().contentEquals("PROD"))
 				Utils.updateOneTrx(flight.getTransactionID(), "DSP_BILL_FLG_HDR", 11);
-
-			insResultManager.doOne(String.valueOf(flight.getTransactionID()), "EC" + "-" + database.getEnv(),
-					"INFO: 2015", "");
-
 			System.out.println("[DEBUG] " + flight.getTransactionID() + ", MenorADiciembre2015");
 		} catch (DiscountDifferences discountDifferences) {
 			System.out.println(discountDifferences.getMessage());
@@ -3773,9 +3624,6 @@ public class Main {
 				agencyData.setReason("Ticket VTC Sin Fee");
 			if (pendingData != null)
 				pendingData.setReason("Ticket VTC Sin Fee");
-
-			insResultManager.doOne(String.valueOf(flight.getTransactionID()), "EC" + "-" + database.getEnv(),
-					"INFO: VTC WITHOUT FEE", "");
 
 			System.out.println("[DEBUG] " + flight.getTransactionID() + ", Ticket VTC Sin Fee");
 		} catch (ONATicket onaTicket) {
@@ -3792,15 +3640,11 @@ public class Main {
 				tickets = ticketManager.generateTickets(flight);
 			} catch (ErrorFieldNotFound errorFieldNotFound) {
 				System.out.println(errorFieldNotFound.getMessage());
-				insResultManager.doOne(String.valueOf(flight.getTransactionID()), "EC" + "-" + database.getEnv(),
-						"ERROR: CANCELED WITH DISCOUNT", errorFieldNotFound.getMessage());
 			} catch (NoTickets noTickets) {
 				System.out.println(noTickets.getMessage());
 				System.out.println("[DEBUG] " + flight.getTransactionID() + ", No tiene boletos");
 				if (database.getEnv().contentEquals("PROD"))
 					Utils.updateOneTrx(flight.getTransactionID(), "DSP_BILL_FLG_HDR", 27);
-				insResultManager.doOne(String.valueOf(flight.getTransactionID()), "EC" + "-" + database.getEnv(),
-						"INFO: WITHOUT TICKETS", "");
 
 			}
 
@@ -3831,8 +3675,6 @@ public class Main {
 				} catch (SQLException | IOException | NoADTPax | NoTickets | EmptyInvoice e) {
 					System.out.println(e.getMessage());
 					e.printStackTrace();
-					insResultManager.doOne(String.valueOf(flight.getTransactionID()), "EC" + "-" + database.getEnv(),
-							"ERROR: CLIENT", e.getMessage());
 					System.out.println("[DEBUG] " + flight.getTransactionID() + ", Error en cliente");
 				} catch (InvoiceInvalidRUC invoiceInvalidRUC) {
 					System.out.println(invoiceInvalidRUC.getMessage());
@@ -3840,14 +3682,10 @@ public class Main {
 							.println("[DEBUG] " + flight.getTransactionID() + ", RUC Invalido en solicitud de factura");
 					if (database.getEnv().contentEquals("PROD"))
 						Utils.updateOneTrx(flight.getTransactionID(), "DSP_BILL_FLG_HDR", 8);
-					insResultManager.doOne(String.valueOf(flight.getTransactionID()), "EC" + "-" + database.getEnv(),
-							"INFO: INVALID DOC IN INVOICE REQUEST", "");
 				} catch (NoClientName noClientName) {
 					noClientName.printStackTrace();
 					if (database.getEnv().contentEquals("PROD"))
 						Utils.updateOneTrx(flight.getTransactionID(), "DSP_BILL_FLG_HDR", 19);
-					insResultManager.doOne(String.valueOf(flight.getTransactionID()), "EC" + "-" + database.getEnv(),
-							"INFO: CLIENT HAS NO NAME", "");
 				}
 
 				// Si el cliente es valido, se hace la Factura
@@ -3909,8 +3747,6 @@ public class Main {
 							System.out.println("[DEBUG] " + flight.getTransactionID() + ", Facturada con exito");
 							if (database.getEnv().contentEquals("PROD"))
 								Utils.updateOneTrx(TransactionID, "DSP_BILL_" + prodType + "_HDR", 1);
-							insResultManager.doOne(String.valueOf(flight.getTransactionID()),
-									"EC" + "-" + database.getEnv(), "INFO: DONE -> " + header.getNumFac(), "");
 						}
 
 					} catch (SQLException e) {
@@ -3922,8 +3758,6 @@ public class Main {
 						System.out.println("[DEBUG] " + flight.getTransactionID() + ", Excepcion SQL");
 						database.rollback();
 						e.printStackTrace();
-						insResultManager.doOne(String.valueOf(flight.getTransactionID()),
-								"EC" + "-" + database.getEnv(), "ERROR: SQL", e.getMessage());
 					}
 				} else {
 					database.rollback();
@@ -4100,8 +3934,6 @@ public class Main {
 								System.out.println("[DEBUG] " + flight.getTransactionID() + ", Excepcion SQL");
 								database.rollback();
 								e.printStackTrace();
-								insResultManager.doOne(String.valueOf(flight.getTransactionID()),
-										"EC" + "-" + database.getEnv(), "ERROR: SQL", e.getMessage());
 							}
 						} else {
 							database.rollback();
