@@ -888,7 +888,7 @@ public class Factura {
 						CodCaj = "02";
 						CodTar = "";
 					}
-					if (feeChannel.compareTo("GCL") == 0 && flgManager.getPaymentMerchant().contains("5820")) {
+					if (feeChannel.compareTo("GCL") == 0) { //&& flgManager.getPaymentMerchant().contains("5820")) {
 						CodCaj = "27";
 					} else {
 						switch (product.getFee().getCodTar()) {
